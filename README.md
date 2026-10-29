@@ -1,1 +1,0 @@
-# crowdstrike_siem_poc
