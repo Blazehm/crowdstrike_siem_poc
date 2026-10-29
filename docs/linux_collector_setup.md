@@ -53,7 +53,7 @@ Test this query in Advanced Event Search first:
 ```
 Then create a correlation rule with it:
 - **Trigger:** Summary
-- **Schedule:** every 5 minutes, 10-minute window
+- **Schedule:** every 5 minutes, 5-minute window
 - **MITRE:** Brute Force (T1110)
 
 ## 7. Trigger and confirm

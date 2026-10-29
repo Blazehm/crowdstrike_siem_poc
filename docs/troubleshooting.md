@@ -4,7 +4,7 @@ Newest entries go at the top. Format: problem, cause, fix.
 
 ## TS-005: Events searchable but no detection
 - **Cause:** Events don't create detections by themselves; a correlation rule must exist, be enabled, and run on its schedule.
-- **Fix:** Tested the query in Advanced Event Search first, then created a rule (Summary trigger, 5 min frequency, 10 min window, MITRE Brute Force). Fresh failed logins triggered it.
+- **Fix:** Tested the query in Advanced Event Search first, then created a rule (Summary trigger, 5 min frequency, 5 min window, MITRE Brute Force). Fresh failed logins triggered it.
 - **Note:** The search window must be at least as long as the frequency. Detections lag events by one schedule interval.
 
 ## TS-004: Collector `permission denied` on `auth.log`
