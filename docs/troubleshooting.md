@@ -1,6 +1,14 @@
 # Troubleshooting Log
 
 Newest entries go at the top. Format: problem, cause, fix.
+## TS-006: `Rename-NetAdapter` says no adapter found
+- **Cause:** The name didn't match exactly. The command used `Ethernet2`, but Windows names the second adapter `Ethernet 2` (with a space), or the name was different on that VM.
+- **Fix:** List the real names with `Get-NetAdapter`, identify the NAT adapter by its `10.0.2.x` address, and rename by interface index:
+```powershell
+  Get-NetIPAddress -AddressFamily IPv4 | select InterfaceAlias, InterfaceIndex, IPAddress
+  Get-NetAdapter -InterfaceIndex <n> | Rename-NetAdapter -NewName "NAT"
+```
+- **Note:** If only one adapter appears, enable Adapter 2 (Internal Network `lab.local`) in VirtualBox with the VM powered off.
 
 ## TS-005: Events searchable but no detection
 - **Cause:** Events don't create detections by themselves; a correlation rule must exist, be enabled, and run on its schedule.
