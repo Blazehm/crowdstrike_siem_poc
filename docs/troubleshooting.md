@@ -1,6 +1,24 @@
 # Troubleshooting Log
 
 Newest entries go at the top. Format: problem, cause, fix.
+## TS-008: Stale default gateway `10.0.2.1` on the LAB adapter
+- **Cause:** A gateway from the earlier `10.0.2.x` address plan stayed on `LAB`. The lab network needs no gateway, since internet access goes through the NAT adapter, and a second default route can break connectivity.
+- **Fix:**
+```powershell
+  Get-NetRoute -DestinationPrefix "0.0.0.0/0" | select InterfaceAlias, NextHop, RouteMetric
+  Remove-NetRoute -InterfaceAlias "LAB" -DestinationPrefix "0.0.0.0/0" -NextHop 10.0.2.1 -Confirm:$false
+```
+
+- **Check:** Only the NAT adapter should keep a default route, and `Test-NetConnection crowdstrike.com -Port 443` should pass.
+## TS-007: DC's NAT adapter lists outside DNS servers
+- **Cause:** The `NAT` adapter had its own DNS servers (`192.168.0.52`, `192.168.0.53`, `8.8.8.8`, `8.8.4.4`). A DC should resolve only through itself, or domain lookups can leak to outside servers.
+- **Fix:** Point both adapters at the DC's own DNS and let the DNS server forward external names:
+```powershell
+  Set-DnsClientServerAddress -InterfaceAlias "NAT" -ServerAddresses 127.0.0.1
+  Set-DnsClient -InterfaceAlias "NAT" -RegisterThisConnectionsAddress $false
+  Add-DnsServerForwarder -IPAddress 8.8.8.8
+```
+
 ## TS-006: `Rename-NetAdapter` says no adapter found
 - **Cause:** The name didn't match exactly. The command used `Ethernet2`, but Windows names the second adapter `Ethernet 2` (with a space), or the name was different on that VM.
 - **Fix:** List the real names with `Get-NetAdapter`, identify the NAT adapter by its `10.0.2.x` address, and rename by interface index:
