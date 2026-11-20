@@ -1,6 +1,22 @@
 # Troubleshooting Log
 
 Newest entries go at the top. Format: problem, cause, fix.
+
+## TS-011: Windows HEC connection stays idle (0 B)
+- **Cause:** The collector config was created in Fleet Management but never selected for the collector host, so the collector never received the sources and sink.
+- **Fix:** Assign the config to the `LAB-DC` collector instance in Fleet Management, then wait a few minutes. The connection began showing ingest.
+- **Note:** Events from the host can still appear in search while the connection is idle, because Falcon sensor telemetry arrives separately (`#repo=base_sensor`). A test event written with `eventcreate` showed up that way and did not prove the collector worked. To test the collector alone, use a `file` source and `#repo!=base_sensor`.
+- **Check:** The host shows as connected with the config assigned, and the connection's ingest counter rises.
+
+## TS-010: Shared clipboard not working on the Server Core DC
+- **Cause:** Clipboard sharing relies on `VBoxTray.exe`, a desktop component. Server Core has no desktop shell, so it doesn't start by itself.
+- **Tried:** Found it at `C:\Program Files\Oracle\VirtualBox Guest Additions\VBoxGuest\VBoxTray.exe` and started it by hand. Paste still did not work.
+- **Workaround:** Manage the DC from HOST01, where paste works: `Enter-PSSession -ComputerName LAB-DC -Credential POCLAB\Administrator` (if it fails, run `Enable-PSRemoting -Force` on the DC). Scripts can also be passed through a shared folder.
+
+## TS-009: HOST01 shows only one adapter with a `169.254.x.x` address
+- **Cause:** Only the internal-network adapter was enabled in VirtualBox. It has no DHCP server, so Windows gave it an automatic `169.254.x.x` address, and there was no NAT adapter for internet access.
+- **Fix:** Shut the VM down cleanly, then in VirtualBox enable **Adapter 2** and attach it to **NAT**. After boot, `Get-NetIPAddress -AddressFamily IPv4` should list a `169.254.x.x` adapter (lab) and a `10.0.x.15` adapter (NAT). Rename them by interface index.
+
 ## TS-008: Stale default gateway `10.0.2.1` on the LAB adapter
 - **Cause:** A gateway from the earlier `10.0.2.x` address plan stayed on `LAB`. The lab network needs no gateway, since internet access goes through the NAT adapter, and a second default route can break connectivity.
 - **Fix:**
@@ -10,6 +26,7 @@ Newest entries go at the top. Format: problem, cause, fix.
 ```
 
 - **Check:** Only the NAT adapter should keep a default route, and `Test-NetConnection crowdstrike.com -Port 443` should pass.
+
 ## TS-007: DC's NAT adapter lists outside DNS servers
 - **Cause:** The `NAT` adapter had its own DNS servers (`192.168.0.52`, `192.168.0.53`, `8.8.8.8`, `8.8.4.4`). A DC should resolve only through itself, or domain lookups can leak to outside servers.
 - **Fix:** Point both adapters at the DC's own DNS and let the DNS server forward external names:
