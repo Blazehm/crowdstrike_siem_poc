@@ -2,6 +2,11 @@
 
 Newest entries go at the top. Format: problem, cause, fix.
 
+## TS-012: Windows brute-force query matched nothing (event code and field names)
+- **Cause:** The query used guessed field names. The parser uses `windows.EventID` for the event ID, `@collect.host` for the host, and `source.address` for the source, not `event.code` and `source.ip`. The event a failed `net use` produces also depends on the protocol: Kerberos (connecting by name from another machine) logs 4771, while NTLM (connecting by IP, or running the command on the DC itself) logs 4625 and 4776.
+- **Fix:** Use the real fields and match both families: `(windows.EventID=4771 or windows.EventID=4625)` grouped by account and `source.address`.
+- **Note:** The source value may appear as `::ffff:10.10.10.20`. To see which codes a host is sending: `#repo!=base_sensor @collect.host="LAB-DC" | groupBy([windows.EventID], function=count())`.
+
 ## TS-011: Windows HEC connection stays idle (0 B)
 - **Cause:** The collector config was created in Fleet Management but never selected for the collector host, so the collector never received the sources and sink.
 - **Fix:** Assign the config to the `LAB-DC` collector instance in Fleet Management, then wait a few minutes. The connection began showing ingest.
