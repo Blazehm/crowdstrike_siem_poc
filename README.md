@@ -58,7 +58,7 @@ All VMs run on a single 8 GB laptop in VirtualBox, with the Windows pair and the
 | [Password brute force](detections/password_bruteforce.md) | Windows 4771 / 4625 | T1110.001 | Done |
 | [Password spraying](detections/password_spraying.md) | Windows 4771 / 4625 | T1110.003 | Done |
 | Account created, then added to a privileged group | Windows 4720 + 4728 / 4732 / 4756 | T1136, T1098 | Planned |
-| Audit policy changed | Windows 4719 | T1562.002 | Planned |
+| Audit policy changed | Windows 4719 | T1562.002 | Done |
 
 ## Documentation
 
