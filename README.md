@@ -54,21 +54,20 @@ All VMs run on a single 8 GB laptop in VirtualBox, with the Windows pair and the
 
 | Detection | Source | MITRE | Status |
 |---|---|---|---|
-| [SSH brute force](detections/ssh_bruteforce.md) | Linux `auth.log` | T1110 | Done |
-| [Password brute force](detections/password_bruteforce.md) | Windows 4771 / 4625 | T1110.001 | Done |
-| [Password spraying](detections/password_spraying.md) | Windows 4771 / 4625 | T1110.003 | Done |
-| [Account created, then added to a group](detections/account_group_add.md) | Windows 4720 + 4728 / 4732 / 4756 | T1136, T1098 | Done |
-| [Audit policy changed](detections/audit_policy_change.md) | Windows 4719 | T1562 | Done |
-| [Linux sensitive file change](detections/linux_sensitive_file_change.md) | Linux auditd | T1098, T1136.001 | Done |
-| [Linux cron change](detections/linux_cron_change.md) | Linux auditd | T1053.003 | Done |
+| [SSH brute force](detections/Linux_Server/ssh_bruteforce.md) | Linux `auth.log` | T1110 | Done |
+| [Password brute force](detections/Active_Directory/windows_bruteforce_detection.md) | Windows 4771 / 4625 | T1110.001 | Done |
+| [Password spraying](detections/Active_Directory/windows_password_spraying_detection.md) | Windows 4771 / 4625 | T1110.003 | Done |
+| [Account created, then added to a group](detections/Active_Directory/windows_account_group_add.md) | Windows 4720 + 4728 / 4732 / 4756 | T1136, T1098 | Done |
+| [Audit policy changed](detections/Active_Directory/windows_audit_policy_change_detection.md) | Windows 4719 | T1562 | Done |
+| [Linux sensitive file change](detections/Linux_Server/linux_sensitive_file_change_detection.md) | Linux auditd | T1098, T1136.001 | Done |
+| [Linux cron change](detections/Linux_Server/linux_cron_change_detection.md) | Linux auditd | T1053.003 | Done |
 
 ## Documentation
 
-- [Architecture](architecture.md)
-- [Linux collector setup and detection](linux_collector_setup.md)
-- [Windows DC and host setup](windows_dc_host_setup.md)
-- [Windows collector setup](windows_collector_setup.md)
-- [Troubleshooting log](troubleshooting.md)
+- [Linux collector setup and detection](docs/linux_collector_setup.md)
+- [Windows DC and host setup](docs/windows_DC_and_host_setup.md)
+- [Windows collector setup](docs/windows_collector_setup.md)
+- [Troubleshooting log](docs/troubleshooting.md)
 
 ## Troubleshooting highlights
 
