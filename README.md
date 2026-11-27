@@ -2,7 +2,7 @@
 
 A proof of concept that takes logs from a Linux host and a small Windows domain into **CrowdStrike Falcon Next-Gen SIEM**, parses them, and turns them into **MITRE ATT&CK-mapped detections** validated with simulated attacks in an isolated lab.
 
-> **Status:** Linux and Windows pipelines are working. Two detections are validated, one is in testing, and more are planned.
+> **Status:** Linux and Windows pipelines are working. Seven detections are validated and more are planned.
 
 ## Architecture
 
@@ -57,8 +57,10 @@ All VMs run on a single 8 GB laptop in VirtualBox, with the Windows pair and the
 | [SSH brute force](detections/ssh_bruteforce.md) | Linux `auth.log` | T1110 | Done |
 | [Password brute force](detections/password_bruteforce.md) | Windows 4771 / 4625 | T1110.001 | Done |
 | [Password spraying](detections/password_spraying.md) | Windows 4771 / 4625 | T1110.003 | Done |
-| Account created, then added to a privileged group | Windows 4720 + 4728 / 4732 / 4756 | T1136, T1098 | Done |
-| Audit policy changed | Windows 4719 | T1562.002 | Done |
+| [Account created, then added to a group](detections/account_group_add.md) | Windows 4720 + 4728 / 4732 / 4756 | T1136, T1098 | Done |
+| [Audit policy changed](detections/audit_policy_change.md) | Windows 4719 | T1562 | Done |
+| [Linux sensitive file change](detections/linux_sensitive_file_change.md) | Linux auditd | T1098, T1136.001 | Done |
+| [Linux cron change](detections/linux_cron_change.md) | Linux auditd | T1053.003 | Done |
 
 ## Documentation
 
@@ -88,7 +90,10 @@ All VMs run on a single 8 GB laptop in VirtualBox, with the Windows pair and the
 - [x] Linux collector pipeline and SSH detection
 - [x] Windows domain, collector, and sensors
 - [x] Windows brute-force detection
-- [ ] Finish password spraying, then add the group-change and audit-policy detections
+- [x] Windows password-spraying detection
+- [x] Windows audit-policy-change detection
+- [x] Windows account-created-and-group-add detection
+- [x] Linux auditd source with sensitive-file and cron-change detections
 - [ ] Dashboard: failed logons, top sources, detections per day
 - [ ] Fusion SOAR notification workflow
 - [ ] API automation (detection-to-alert scripts)

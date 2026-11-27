@@ -2,6 +2,16 @@
 
 Newest entries go at the top. Format: problem, cause, fix.
 
+## TS-014: Audit log events flagged "filtered out by the parser"
+- **Cause:** The audit connection used a syslog-style parser (`#type: linux-syslog`), which cannot read auditd records (`type=SYSCALL msg=audit(...)`). Events arrived with `#error=true`, no parsed fields, and an ingest-time `@timestamp`. The original line stayed intact in `@rawstring`.
+- **Fix:** Assigned the `linux-audit` parser to the audit connection. Events now arrive as `#event.dataset=auditd.syscall` or `auditd.user_cmd`, with the audit key in `rule.name`, the program in `process.executable`, the login user in `user.name`, and the event time in `@timestamp`.
+- **Note:** Audit rule loading also writes `type=CONFIG_CHANGE` records that carry the same key. Filter detection queries to `#event.dataset=auditd.syscall` so loading rules doesn't trigger them.
+
+## TS-013: Collector sink returns 401 Unauthorized
+- **Cause:** CrowdStrike rejected the API key for the `falcon_audit` sink. The `falcon` sink kept working, so the problem was limited to the audit sink's `url` or `token`: a key that was copied wrongly or truncated, regenerated since, copied from the wrong connection, or paired with another connection's URL.
+- **Fix:** Generate a new API key on the audit connection (it is shown once), paste it and that connection's own URL into the `falcon_audit` sink, and quote both values. Test the key outside the collector: `curl` a test event to the connection's URL with `Authorization: Bearer <key>` and expect HTTP 200. Make sure the config is still assigned to the host.
+- **Result:** The collector kept retrying. Once the key was valid, the queued audit events arrived, about 18 hours of backlog.
+
 ## TS-012: Windows brute-force query matched nothing (event code and field names)
 - **Cause:** The query used guessed field names. The parser uses `windows.EventID` for the event ID, `@collect.host` for the host, and `source.address` for the source, not `event.code` and `source.ip`. The event a failed `net use` produces also depends on the protocol: Kerberos (connecting by name from another machine) logs 4771, while NTLM (connecting by IP, or running the command on the DC itself) logs 4625 and 4776.
 - **Fix:** Use the real fields and match both families: `(windows.EventID=4771 or windows.EventID=4625)` grouped by account and `source.address`.
